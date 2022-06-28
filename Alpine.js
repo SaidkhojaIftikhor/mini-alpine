@@ -12,7 +12,7 @@ window.Alpine = {
     "x-show": (el, value) => {
       el.style.display = value ? "block" : "none";
     },
-    "x-if"(element, value) {
+    "x-if": (element, value) {
       if (!value) {
         if (element instanceof HTMLElement) {
           if (!Alpine.cache.has(Alpine.constants.removedElement)) {
