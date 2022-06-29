@@ -1,4 +1,9 @@
 window.Alpine = {
+  cache: new Map(),
+
+  constants: {
+    removedElement: "_rmEl",
+  },
   directives: {
     "x-text": (el, value) => {
       el.textContent = value;
@@ -6,6 +11,28 @@ window.Alpine = {
 
     "x-show": (el, value) => {
       el.style.display = value ? "block" : "none";
+    },
+    "x-if": (element, value) {
+      if (!value) {
+        if (element instanceof HTMLElement) {
+          if (!Alpine.cache.has(Alpine.constants.removedElement)) {
+            Alpine.cache.set(
+              Alpine.constants.removedElement,
+              element.innerHTML.toString()
+            );
+          }
+
+          element.innerHTML = "";
+        }
+
+        return;
+      }
+
+      if (element.innerHTML === "") {
+        if (Alpine.cache.has(Alpine.constants.removedElement)) {
+          element.innerHTML = Alpine.cache.get(Alpine.constants.removedElement);
+        }
+      }
     },
   },
 
