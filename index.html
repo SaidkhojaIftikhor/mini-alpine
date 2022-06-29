@@ -1,23 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-  </head>
-  <body>
-    <div x-data="{count: 0}">
-      <button @click="count++">+</button>
-      <button @click="count--">-</button>
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+    </head>
+    <body>
+        <div x-data="{count: 0}">
+            <button @click="count++">+</button>
+            <button @click="count--">-</button>
 
-      <span x-text="count"></span>
+            <span x-text="count"></span>
 
-      <div x-if="count > 2">
-        <p>Count is greater than 2</p>
-      </div>
-    </div>
+            <div x-if="count > 2">
+                <p>Count is greater than 2</p>
+            </div>
+        </div>
 
-    <script src="./Alpine.js"></script>
-  </body>
+        <script src="./Alpine.js"></script>
+    </body>
 </html>
