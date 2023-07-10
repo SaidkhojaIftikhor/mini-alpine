@@ -36,24 +36,28 @@ window.Alpine = {
                 }
             }
         },
+        "x-bind": (el, value) => {
+            const attrName = el.getAttributeNames().find(name => name.startsWith("x-bind:") || name.startsWith(":"));
+            const actualAttrName = attrName.startsWith(":") ? attrName.substring(1) : attrName.substring(7);
+            el.setAttribute(actualAttrName, value);
+        }
     },
 
     start() {
         this.root = document.querySelector("[x-data]");
         this.rawData = this.getInitialData();
         this.data = this.observe(this.rawData);
-
         this.refreshDom();
         this.registerListeners();
     },
 
     getInitialData() {
-        let dataString = this.root.getAttribute("x-data");
+        const dataString = this.root.getAttribute("x-data");
         return eval(`(${dataString})`);
     },
 
     observe(rawData) {
-        let self = this;
+        const self = this;
         return new Proxy(rawData, {
             set(target, key, value) {
                 target[key] = value;
@@ -66,13 +70,17 @@ window.Alpine = {
 
     refreshDom() {
         this.walkDom(this.root, (el) => {
-            Array.from(el.attributes).forEach((attribute) => {
-                if (!Object.keys(this.directives).includes(attribute.name))
-                    return;
+            for (const attribute of el.attributes) {
+                let { name, value } = attribute;
+                if (name.startsWith('x-bind') || name.startsWith(':')) {
+                    this.directives['x-bind'](el, eval(`with (this.data) { ${value} }`))
+                    continue
+                }
+                if (!Object.keys(this.directives).includes(name)) return;
 
-                let directive = this.directives[attribute.name];
-                directive(el, eval(`with (this.data) { ${attribute.value} }`));
-            });
+                const directive = this.directives[name];
+                directive(el, eval(`with (this.data) { ${value} }`));
+            }
         });
     },
 
@@ -94,15 +102,15 @@ window.Alpine = {
     },
 
     addListenerToElement(el) {
-        Array.from(el.attributes).forEach((attribute) => {
+        for (const attribute of el.attributes) {
             if (!attribute.name.startsWith("@")) return;
 
-            let event = attribute.name.substring(1);
+            const event = attribute.name.substring(1);
 
             el.addEventListener(event, () => {
                 eval(`with(this.data) { ${attribute.value} }`);
             });
-        });
+        }
     },
 };
 
